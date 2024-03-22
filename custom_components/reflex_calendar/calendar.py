@@ -2,8 +2,10 @@
 
 # For wrapping react guide, visit https://reflex.dev/docs/wrapping-react/overview/
 
-from datetime import datetime
+from datetime import datetime, timezone, tzinfo
 from typing import Any, Literal
+
+import pytz
 
 import reflex as rx
 from reflex.utils import format, imports
@@ -182,6 +184,15 @@ class Calendar(rx.Component):
     # To add custom code to your component
     # def _get_custom_code(self) -> str:
     # return f"const customCode = 'customCode';"
+
+
+def fix_timezone(date: str, tz: tzinfo | str | None = None):
+    """Small helper to fix the timezone of date return by Calendar."""
+    tz = tz or datetime.now(timezone.utc).astimezone().tzinfo
+    if isinstance(tz, str):
+        tz = pytz.timezone("Europe/Berlin")
+    print(tz)
+    return datetime.fromisoformat(date).astimezone(tz).isoformat()
 
 
 calendar = Calendar.create

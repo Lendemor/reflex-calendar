@@ -2,3 +2,5 @@
 *.py[cod]
 .web
 __pycache__/
+PKG-INFO
+reflex_calendar.egg-info/

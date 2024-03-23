@@ -2,10 +2,8 @@
 
 # For wrapping react guide, visit https://reflex.dev/docs/wrapping-react/overview/
 
-from datetime import datetime, timezone, tzinfo
+from datetime import datetime
 from typing import Any, Literal
-
-import pytz
 
 import reflex as rx
 from reflex.utils import format, imports
@@ -169,30 +167,26 @@ class Calendar(rx.Component):
     def get_event_triggers(self) -> dict[str, Any]:
         return {
             **super().get_event_triggers(),
-            "on_active_start_date_change": lambda e0: [e0],
-            "on_change": lambda e0: [e0],
-            "on_click_day": lambda e0: [e0],
-            "on_click_decade": lambda e0: [e0],
-            "on_click_month": lambda e0: [e0],
-            "on_click_week_number": lambda e0: [e0],
-            "on_click_year": lambda e0: [e0],
-            "on_drill_down": lambda e0: [e0],
-            "on_drill_up": lambda e0: [e0],
-            "on_view_change": lambda e0: [e0],
+            "on_active_start_date_change": lambda e0: [
+                rx.Var.create(
+                    f"{{...{e0}, activeStartDate: {e0}.activeStartDate.toDateString()}}"
+                )
+            ],
+            "on_change": lambda date: [rx.Var.create(f"{date}.toDateString()")],
+            "on_click_day": lambda date: [rx.Var.create(f"{date}.getDate()")],
+            "on_click_month": lambda date: [rx.Var.create(f"{date}.getMonth()+1")],
+            "on_click_week_number": lambda date: [rx.Var.create(f"{date}.getDay()")],
+            "on_click_year": lambda date: [rx.Var.create(f"{date}.getFullYear()")],
+            "on_click_decade": lambda date: [rx.Var.create(f"{date}.getFullYear()")],
+            "on_drill_down": lambda e0: [rx.Var.create(f"{e0}.view")],
+            "on_drill_up": lambda e0: [rx.Var.create(f"{e0}.view")],
+            "on_view_change": lambda e0: [e0],  # use on_view_change for full event
         }
-
-    # To add custom code to your component
-    # def _get_custom_code(self) -> str:
-    # return f"const customCode = 'customCode';"
-
-
-def fix_timezone(date: str, tz: tzinfo | str | None = None):
-    """Small helper to fix the timezone of date return by Calendar."""
-    tz = tz or datetime.now(timezone.utc).astimezone().tzinfo
-    if isinstance(tz, str):
-        tz = pytz.timezone("Europe/Berlin")
-    print(tz)
-    return datetime.fromisoformat(date).astimezone(tz).isoformat()
 
 
 calendar = Calendar.create
+
+
+def reformat_date(date: str, output_format: str = "%Y-%m-%d") -> datetime:
+    """Reformat a date."""
+    return datetime.strptime(date, "%a %b %d %Y").strftime(output_format)

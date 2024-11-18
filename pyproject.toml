@@ -11,7 +11,7 @@ version = "0.0.5"
 description = "Reflex custom component calendar"
 readme = "README.md"
 license = { text = "Apache-2.0" }
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 authors = [{ name = "Thomas Brandého", email = "thomas.brandeho@gmail.com" }]
 keywords = [
     "reflex",

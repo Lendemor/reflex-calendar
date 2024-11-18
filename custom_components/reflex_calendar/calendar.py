@@ -3,21 +3,63 @@
 # For wrapping react guide, visit https://reflex.dev/docs/wrapping-react/overview/
 
 from datetime import datetime
-from typing import Any, Literal
+from typing import Literal
 
 import reflex as rx
-from reflex.utils import format, imports
+from reflex.utils import format
 
 LiteralCalendarType = Literal["gregory", "hebrew", "islamic", "iso8601"]
 LiteralDefaultView = Literal["month", "year", "decade", "century"]
 LiteralReturnValue = Literal["start", "end", "range"]
 
 
+def _on_active_start_date_change_spec(e0):
+    return [
+        rx.Var(f"{{...{e0}, activeStartDate: {e0}.activeStartDate.toDateString()}}")
+    ]
+
+
+def _on_change_spec(date) -> list[rx.Var]:
+    return [rx.Var(f"{date}.toDateString()")]
+
+
+def _on_click_day_spec(date) -> list[rx.Var]:
+    return [rx.Var(f"{date}.getDate()")]
+
+
+def _on_click_month_spec(date) -> list[rx.Var]:
+    return [rx.Var(f"{date}.getMonth()+1")]
+
+
+def _on_click_week_number_spec(date) -> list[rx.Var]:
+    return [rx.Var(f"{date}.getDay()")]
+
+
+def _on_click_year_spec(date) -> list[rx.Var]:
+    return [rx.Var(f"{date}.getFullYear()")]
+
+
+def _on_click_decade_spec(date) -> list[rx.Var]:
+    return [rx.Var(f"{date}.getFullYear()")]
+
+
+def _on_drill_down_spec(e0) -> list[rx.Var]:
+    return [rx.Var(f"{e0}.view")]
+
+
+def _on_drill_up_spec(e0) -> list[rx.Var]:
+    return [rx.Var(f"{e0}.view")]
+
+
+def _on_view_change_spec(e0) -> list[rx.Var]:
+    return [e0]
+
+
 class Calendar(rx.Component):
     """Calendar component."""
 
     # The React library to wrap.
-    library = "react-calendar@4.8.0"
+    library: str = "react-calendar@5.1.0"
 
     # lib_dependencies: list[str] = []
 
@@ -142,17 +184,43 @@ class Calendar(rx.Component):
     # The view of the component. (default: the most detailed view allowed by min_detail and max_detail)
     view: rx.Var[LiteralDefaultView]
 
-    def _get_imports(self) -> imports.ImportDict:
-        return imports.merge_imports(
-            super()._get_imports(),
-            {
-                "": {
-                    imports.ImportVar(
-                        tag=f"{format.format_library_name(self.library)}/dist/Calendar.css"
-                    )
-                },
-            },
-        )
+    # Triggered when the active start date changes.
+    on_active_start_date_change: rx.EventHandler[_on_active_start_date_change_spec]
+
+    # Triggered when the user changes the value.
+    on_change: rx.EventHandler[_on_change_spec]
+
+    # Triggered when the user clicks on a day.
+    on_click_day: rx.EventHandler[_on_click_day_spec]
+
+    # Triggered when the user clicks on a month.
+    on_click_month: rx.EventHandler[_on_click_month_spec]
+
+    # Triggered when the user clicks on a week number.
+    on_click_week_number: rx.EventHandler[_on_click_week_number_spec]
+
+    # Triggered when the user clicks on a year.
+    on_click_year: rx.EventHandler[_on_click_year_spec]
+
+    # Triggered when the user clicks on a decade.
+    on_click_decade: rx.EventHandler[_on_click_decade_spec]
+
+    # Triggered when the user navigates to a lower level view.
+    on_drill_down: rx.EventHandler[_on_drill_down_spec]
+
+    # Triggered when the user navigates to a higher level view.
+    on_drill_up: rx.EventHandler[_on_drill_up_spec]
+
+    # Use on_view_change to get the full event.
+    on_view_change: rx.EventHandler[_on_view_change_spec]
+
+    def add_imports(self) -> dict[str, rx.ImportVar]:
+        """Add imports for the component."""
+        return {
+            "": rx.ImportVar(
+                tag=f"{format.format_library_name(self.library)}/dist/Calendar.css"
+            )
+        }
 
     @classmethod
     def create(cls, *children, **props) -> "Calendar":
@@ -163,25 +231,6 @@ class Calendar(rx.Component):
         props["style"] = style
 
         return cls(*children, **props)
-
-    def get_event_triggers(self) -> dict[str, Any]:
-        return {
-            **super().get_event_triggers(),
-            "on_active_start_date_change": lambda e0: [
-                rx.Var.create(
-                    f"{{...{e0}, activeStartDate: {e0}.activeStartDate.toDateString()}}"
-                )
-            ],
-            "on_change": lambda date: [rx.Var.create(f"{date}.toDateString()")],
-            "on_click_day": lambda date: [rx.Var.create(f"{date}.getDate()")],
-            "on_click_month": lambda date: [rx.Var.create(f"{date}.getMonth()+1")],
-            "on_click_week_number": lambda date: [rx.Var.create(f"{date}.getDay()")],
-            "on_click_year": lambda date: [rx.Var.create(f"{date}.getFullYear()")],
-            "on_click_decade": lambda date: [rx.Var.create(f"{date}.getFullYear()")],
-            "on_drill_down": lambda e0: [rx.Var.create(f"{e0}.view")],
-            "on_drill_up": lambda e0: [rx.Var.create(f"{e0}.view")],
-            "on_view_change": lambda e0: [e0],  # use on_view_change for full event
-        }
 
 
 calendar = Calendar.create

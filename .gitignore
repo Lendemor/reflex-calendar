@@ -3,4 +3,6 @@
 .web
 __pycache__/
 PKG-INFO
-reflex_calendar.egg-info/
+custom_components/reflex_calendar.egg-info/*
+dist/
+.DS_Store

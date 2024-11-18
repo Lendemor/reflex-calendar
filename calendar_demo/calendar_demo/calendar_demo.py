@@ -11,7 +11,7 @@ class Foo(rx.State):
 
     def change_handler(self, var):
         self.selected_date = var
-        self.add_log(f"Changed selected date: {var}")
+        return self.add_log(f"Changed selected date: {var}")
 
     def active_start_date_change_handler(self, var):
         if "drill" in var["action"]:
@@ -19,39 +19,40 @@ class Foo(rx.State):
 
         action = var["action"]
         start_date = var["activeStartDate"]
-        self.add_log(f"Changed active start date to {start_date} ({action})")
+        return self.add_log(f"Changed active start date to {start_date} ({action})")
 
     def click_day_handler(self, day):
-        self.add_log(f"Clicked day {day}")
+        return self.add_log(f"Clicked day {day}")
 
     def click_month_handler(self, month):
-        self.add_log(f"Clicked month {month}")
+        return self.add_log(f"Clicked month {month}")
 
     def click_decade_handler(self, var):
-        self.add_log(f"Clicked decade {var}")
+        return self.add_log(f"Clicked decade {var}")
 
     def click_year_handler(self, year):
-        self.add_log(f"Clicked year {year}")
+        return self.add_log(f"Clicked year {year}")
 
     def click_week_number_handler(self, var):
-        self.add_log(f"Clicked week number {var['week_number']}")
+        return self.add_log(f"Clicked week number {var['week_number']}")
 
     def drill_down_handler(self, view):
-        self.add_log(f"Drilled down to: {view} view")
+        return self.add_log(f"Drilled down to: {view} view")
 
     def drill_up_handler(self, view):
-        self.add_log(f"Drilled up to: {view} view")
+        return self.add_log(f"Drilled up to: {view} view")
 
     def view_change_handler(self, event):
-        self.add_log(f"View changed to: {event['view']}")
+        return self.add_log(f"View changed to: {event['view']}")
 
     def clear_logs(self):
         self.logs = []
 
     def add_log(self, log):
         self.logs.append(log)
-        if len(self.logs) > 15:
+        if len(self.logs) > 20:
             self.logs.pop(0)
+        return rx.toast(log, position="top-center")
 
 
 def logs():
@@ -73,7 +74,7 @@ def logs():
 def demo():
     return rx.vstack(
         rx.heading("Calendar Demo", size="6"),
-        # rx.moment(Foo.selected_date),
+        rx.moment(Foo.selected_date, format="MMMM D, YYYY", size="4"),
         calendar(
             go_to_range_start_on_select=True,
             locale="fr-FR",
@@ -93,6 +94,7 @@ def demo():
     )
 
 
+@rx.page()
 def index() -> rx.Component:
     return rx.center(
         rx.hstack(
@@ -109,10 +111,4 @@ def index() -> rx.Component:
 
 
 # Add state and page to the app.
-app = rx.App(
-    theme=rx.theme(
-        # theme_panel=True,
-        appearance="dark",
-    )
-)
-app.add_page(index)
+app = rx.App()

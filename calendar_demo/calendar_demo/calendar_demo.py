@@ -7,11 +7,17 @@ import reflex as rx
 
 class Foo(rx.State):
     selected_date: str = ""
+    start_date: str = ""
+    end_date: str = ""
     logs: list[str] = []
 
     def change_handler(self, var):
         self.selected_date = var
         return self.add_log(f"Changed selected date: {var}")
+
+    def change_range_handler(self, var):
+        self.start_date, self.end_date = var
+        return self.add_log(f"Changed selected date range: {self.start_date} {self.end_date}")
 
     def active_start_date_change_handler(self, var):
         if "drill" in var["action"]:
@@ -80,6 +86,27 @@ def demo():
             locale="fr-FR",
             on_active_start_date_change=Foo.active_start_date_change_handler,
             on_change=Foo.change_handler,
+            on_click_day=Foo.click_day_handler,
+            on_click_month=Foo.click_month_handler,
+            on_click_decade=Foo.click_decade_handler,
+            on_click_year=Foo.click_year_handler,
+            on_click_week_number=Foo.click_week_number_handler,
+            on_drill_down=Foo.drill_down_handler,
+            on_drill_up=Foo.drill_up_handler,
+            # on_view_change=Foo.view_change_handler,
+        ),
+        rx.spacer(),
+        rx.hstack(
+            rx.moment(Foo.start_date, format="MMMM D, YYYY", size="4"),
+            rx.moment(Foo.end_date, format="MMMM D, YYYY", size="4"),
+        ),
+        calendar(
+            go_to_range_start_on_select=True,
+            locale="fr-FR",
+            on_active_start_date_change=Foo.active_start_date_change_handler,
+            select_range=True,
+            return_value="range",
+            on_change=Foo.change_range_handler,
             on_click_day=Foo.click_day_handler,
             on_click_month=Foo.click_month_handler,
             on_click_decade=Foo.click_decade_handler,

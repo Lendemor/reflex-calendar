@@ -17,7 +17,7 @@ class Foo(rx.State):
 
     def change_range_handler(self, var):
         self.start_date, self.end_date = var
-        return self.add_log(f"Changed selected date range: {self.start_date} {self.end_date}")
+        return self.add_log(f"Changed selected date range: {self.start_date} - {self.end_date}")
 
     def active_start_date_change_handler(self, var):
         if "drill" in var["action"]:

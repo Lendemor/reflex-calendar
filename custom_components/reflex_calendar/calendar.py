@@ -20,7 +20,13 @@ def _on_active_start_date_change_spec(e0):
 
 
 def _on_change_spec(date) -> list[rx.Var]:
-    return [rx.Var(f"{date}.toDateString()")]
+    return [
+        rx.cond(
+            rx.Var(f"Array.isArray({date})"),
+            rx.Var(f"{date}.map(d => d.toDateString())"),
+            rx.Var(f"{date}.toDateString()"),
+        ),
+    ]
 
 
 def _on_click_day_spec(date) -> list[rx.Var]:

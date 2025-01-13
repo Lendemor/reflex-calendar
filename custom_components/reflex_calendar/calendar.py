@@ -13,13 +13,13 @@ LiteralDefaultView = Literal["month", "year", "decade", "century"]
 LiteralReturnValue = Literal["start", "end", "range"]
 
 
-def _on_active_start_date_change_spec(e0):
+def _on_active_start_date_change_spec(e0: dict):
     return [
         rx.Var(f"{{...{e0}, activeStartDate: {e0}.activeStartDate.toDateString()}}")
     ]
 
 
-def _on_change_spec(date) -> list[rx.Var]:
+def _on_change_spec(date: str) -> list[rx.Var]:
     return [
         rx.cond(
             rx.Var(f"Array.isArray({date})"),
@@ -29,35 +29,35 @@ def _on_change_spec(date) -> list[rx.Var]:
     ]
 
 
-def _on_click_day_spec(date) -> list[rx.Var]:
+def _on_click_day_spec(date: str) -> list[rx.Var]:
     return [rx.Var(f"{date}.getDate()")]
 
 
-def _on_click_month_spec(date) -> list[rx.Var]:
+def _on_click_month_spec(date: str) -> list[rx.Var]:
     return [rx.Var(f"{date}.getMonth()+1")]
 
 
-def _on_click_week_number_spec(date) -> list[rx.Var]:
+def _on_click_week_number_spec(date: str) -> list[rx.Var]:
     return [rx.Var(f"{date}.getDay()")]
 
 
-def _on_click_year_spec(date) -> list[rx.Var]:
+def _on_click_year_spec(date: str) -> list[rx.Var]:
     return [rx.Var(f"{date}.getFullYear()")]
 
 
-def _on_click_decade_spec(date) -> list[rx.Var]:
+def _on_click_decade_spec(date: str) -> list[rx.Var]:
     return [rx.Var(f"{date}.getFullYear()")]
 
 
-def _on_drill_down_spec(e0) -> list[rx.Var]:
+def _on_drill_down_spec(e0: dict) -> list[rx.Var]:
     return [rx.Var(f"{e0}.view")]
 
 
-def _on_drill_up_spec(e0) -> list[rx.Var]:
+def _on_drill_up_spec(e0: dict) -> list[rx.Var]:
     return [rx.Var(f"{e0}.view")]
 
 
-def _on_view_change_spec(e0) -> list[rx.Var]:
+def _on_view_change_spec(e0: dict) -> list[rx.Var]:
     return [e0]
 
 

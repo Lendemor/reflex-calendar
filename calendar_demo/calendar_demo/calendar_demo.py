@@ -11,15 +11,17 @@ class Foo(rx.State):
     end_date: str = ""
     logs: list[str] = []
 
-    def change_handler(self, var):
+    def change_handler(self, var: str):
         self.selected_date = var
         return self.add_log(f"Changed selected date: {var}")
 
-    def change_range_handler(self, var):
+    def change_range_handler(self, var: str):
         self.start_date, self.end_date = var
-        return self.add_log(f"Changed selected date range: {self.start_date} - {self.end_date}")
+        return self.add_log(
+            f"Changed selected date range: {self.start_date} - {self.end_date}"
+        )
 
-    def active_start_date_change_handler(self, var):
+    def active_start_date_change_handler(self, var: dict):
         if "drill" in var["action"]:
             return
 
@@ -27,34 +29,34 @@ class Foo(rx.State):
         start_date = var["activeStartDate"]
         return self.add_log(f"Changed active start date to {start_date} ({action})")
 
-    def click_day_handler(self, day):
+    def click_day_handler(self, day: str):
         return self.add_log(f"Clicked day {day}")
 
-    def click_month_handler(self, month):
+    def click_month_handler(self, month: str):
         return self.add_log(f"Clicked month {month}")
 
-    def click_decade_handler(self, var):
+    def click_decade_handler(self, var: str):
         return self.add_log(f"Clicked decade {var}")
 
-    def click_year_handler(self, year):
+    def click_year_handler(self, year: str):
         return self.add_log(f"Clicked year {year}")
 
-    def click_week_number_handler(self, var):
+    def click_week_number_handler(self, var: dict):
         return self.add_log(f"Clicked week number {var['week_number']}")
 
-    def drill_down_handler(self, view):
+    def drill_down_handler(self, view: str):
         return self.add_log(f"Drilled down to: {view} view")
 
-    def drill_up_handler(self, view):
+    def drill_up_handler(self, view: str):
         return self.add_log(f"Drilled up to: {view} view")
 
-    def view_change_handler(self, event):
+    def view_change_handler(self, event: dict):
         return self.add_log(f"View changed to: {event['view']}")
 
     def clear_logs(self):
         self.logs = []
 
-    def add_log(self, log):
+    def add_log(self, log: str):
         self.logs.append(log)
         if len(self.logs) > 20:
             self.logs.pop(0)
